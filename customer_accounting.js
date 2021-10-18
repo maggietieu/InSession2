@@ -1,49 +1,70 @@
-const { MongoClient } = require('mongodb');
+const mongoose = require('mongoose');
+const Customer = require('./models/customer');
+const Order = require('./models/order');
 
-async function main(){
-    const uri = "mongodb+srv://admin:admin123@cluster0.fr3ga.mongodb.net/InSession2?retryWrites=true&w=majority";
-    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost/customerDB');
 
-    try{
-        await client.connect();
-        await createCustomer(client, {
-            customerId: "123",
-            name: "Bob",
+mongoose.connection.once('open', () => {
+    console.log('Database connection successful...');
+}).on('error', function(err){
+    console.log('Database connection ERROR...');
+});
+
+async function createCustomer(_customerId, _name) {
+    const filter = { customerId: _customerId };
+    const existingCustomerWithGivenId = await Customer.findOne(filter);
+    // If a customerId already exists, don't add it.
+    if(existingCustomerWithGivenId != null) {
+        //console.log("Customer already exists in database. Did not add duplicate.")
+    } else {
+        var customer = new Customer({
+            customerId: _customerId,
+            name: _name,
             totalAmtPurchased: 0
         });
-        await createOrder(client, {
-            customerId: "456",
-            amtPurchased: 1
+        // Save the customer to collection
+        await customer.save().then(() => {
+           // console.log("Customer added? ", customer.isNew == false, "\n");
         });
-        await retrieveAllCustomers(client);
-    } catch (e) {
-        console.log(e);
-    } finally {
-        await client.close();
     }
 }
 
-async function createCustomer(client, newCustomer){
-    const result = await client.db("CustomerAccounting").collection("Customer").insertOne(newCustomer);
-    console.log("New Customer created with id: ", result.insertedId);
+async function createOrder(_customerId, _amtPurchased) {
+    const filter = { customerId: _customerId };
+    const existingCustomerWithGivenId = await Customer.findOne(filter);
+    // If a customerId exists, the order can be placed.
+    if(existingCustomerWithGivenId != null) {
+        var order = new Order({
+            customerId: _customerId,
+            amtPurchased: _amtPurchased
+        });
+        // Increment customer's totalAmtPurchased by the order's amt
+        const update = { totalAmtPurchased : existingCustomerWithGivenId.totalAmtPurchased + _amtPurchased };
+        await Customer.findOneAndUpdate(filter, update);
+        // Save the order to collection
+        await order.save().then(() => {
+           // console.log("Order added? ", order.isNew == false, "\n");
+        });
+    } else {
+        //console.log("Customer with id", _customerId, "does not exist.");
+    }
 }
 
-async function createOrder(client, id, amtPurchased){
-    const customerExists = await client.db("CustomerAccounting").collection("Order").findOne({customerId: id});
-    const result = 0;
-    if(customerExists){
-        result = await client.db("CustomerAccounting").collection("Order").insertOne(newOrder);
-        // ALSO UPDATE TOTAL AMT PURCHASED
-    }
-    else{
-        // customer cannot order if they don't exist???? maybe create if they dont exts, but review specs
-    }
-    console.log("New Order created with id: ", result.insertedId);
+async function getAllCustomers() {
+    const result = await Customer.find();
+    return result || [];
 }
 
-async function retrieveAllCustomers(client){
-    const result = await client.db("CustomerAccounting").collection("Customer").find().toArray();
-    console.log(JSON.stringify(result));
+module.exports = {
+    createOrder,
+    createCustomer,
+    getAllCustomers
+};
+
+async function main() {
+    await Customer.deleteMany();
+    const result = await getAllCustomers();
+    //console.log(result.length);
 }
 
 main();
