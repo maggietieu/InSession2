@@ -1,10 +1,14 @@
 const fs = require('fs');
 
 function sum_from_file(file_name){
+    if(typeof file_name != "string" || file_name == null){
+        throw new Exception("Input must be a string.");
+    }
+
     var text_to_append = "\n";
 
     fs.readFile((file_name), (err, data) => {
-        if(err) throw err;
+        if(err) throw new Exception(err.toString());
 
         var lines = data.toString().split("\n");
         var sum = 0;
@@ -14,7 +18,7 @@ function sum_from_file(file_name){
                 sum += parseInt(line);
             } catch (e) {
                 // test floats, characters, new lines, nothing, etc.
-                throw e("Failed to parse a value into integer type");
+                throw new Exception("Failed to parse a value into integer type");
             }
         });
 
@@ -25,7 +29,5 @@ function sum_from_file(file_name){
         });
     });
 }
-
-sum_from_file('nums.txt');
 
 module.exports = sum_from_file;

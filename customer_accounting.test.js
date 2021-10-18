@@ -53,7 +53,7 @@ describe("Adding a customer to database", () => {
         Customer.findOne(filter).exec(function (err, result) {
             expect(result.totalAmtPurchased).toBe(0);
         });
-    });   
+    });
 });
 
 describe("Adding an order to database", () => {

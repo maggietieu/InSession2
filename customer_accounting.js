@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 const Customer = require('./models/customer');
 const Order = require('./models/order');
 
+// Database Info
+// Name: MongoDB
+// Port: 27017
+// Version: 5.0
+// Download link: https://docs.mongodb.com/guides/server/install/
+
 mongoose.connect('mongodb://localhost/customerDB');
 
 mongoose.connection.once('open', () => {
@@ -30,6 +36,10 @@ async function createCustomer(_customerId, _name) {
 }
 
 async function createOrder(_customerId, _amtPurchased) {
+    // if(typeof _customerId != 'string' || typeof _amtPurchased != 'number') {
+    //     throw new Exception('CustomerId and AmyPurchased must be string and number, respectively.');
+    // }
+
     const filter = { customerId: _customerId };
     const existingCustomerWithGivenId = await Customer.findOne(filter);
     // If a customerId exists, the order can be placed.
@@ -60,11 +70,3 @@ module.exports = {
     createCustomer,
     getAllCustomers
 };
-
-async function main() {
-    await Customer.deleteMany();
-    const result = await getAllCustomers();
-    //console.log(result.length);
-}
-
-main();
