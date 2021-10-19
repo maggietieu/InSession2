@@ -54,6 +54,38 @@ describe("Adding a customer to database", () => {
             expect(result.totalAmtPurchased).toBe(0);
         });
     });
+
+    // #stub
+    it('rejects a null customerId', async () => {
+        var customerId = null;
+        var name = "Bob";
+        expect.assertions(1);
+        return expect(createCustomer(customerId, name)).rejects.toEqual(expect.any(Error));
+    });
+
+    // #stub
+    it('rejects a null name', async () => {
+        var customerId = '123abc';
+        var name = null;
+        expect.assertions(1);
+        return expect(createCustomer(customerId, name)).rejects.toEqual(expect.any(Error));
+    });
+
+    // #stub
+    it('rejects a non-string customerId', async () => {
+        var customerId = 1;
+        var name = "Bob";
+        expect.assertions(1);
+        return expect(createCustomer(customerId, name)).rejects.toEqual(expect.any(Error));
+    });
+
+    // #stub
+    it('rejects a non-string name', async () => {
+        var customerId = '123';
+        var name = 1;
+        expect.assertions(1);
+        return expect(createCustomer(customerId, name)).rejects.toEqual(expect.any(Error));
+    });
 });
 
 describe("Adding an order to database", () => {
@@ -113,7 +145,43 @@ describe("Adding an order to database", () => {
         await Customer.findOne(filter).exec(function (err, result) {
             expect(result.totalAmtPurchased).toBe(amtPurchased1 + amtPurchased2);
         });
-    });   
+    });
+    
+    // #stub
+    it('rejects a null customerId', async () => {
+        var customerId = null;
+        var amtPurchased = 2;
+        expect.assertions(1);
+        return expect(createOrder(customerId, amtPurchased)).rejects.toEqual(expect.any(Error));
+    });
+
+    // #stub
+    it('rejects a null name', async () => {
+        var customerId = '123abc';
+        var name = 'Bob';
+        var amtPurchased = null;
+        await createCustomer(customerId, name);
+        expect.assertions(1);
+        return expect(createOrder(customerId, amtPurchased)).rejects.toEqual(expect.any(Error));
+    });
+
+    // #stub
+    it('rejects a non-string customerId', async () => {
+        var customerId = 1;
+        var amtPurchased = 2;
+        expect.assertions(1);
+        return expect(createOrder(customerId, amtPurchased)).rejects.toEqual(expect.any(Error));
+    });
+
+    // #stub
+    it('rejects a non-numeric amtPurchased', async () => {
+        var customerId = '123';
+        var name = 'Bob';
+        var amtPurchased = 'abc';
+        await createCustomer(customerId, name);
+        expect.assertions(1);
+        return expect(createOrder(customerId, amtPurchased)).rejects.toEqual(expect.any(Error));
+    });
 });
 
 describe("Retrieving all customers in the database", () => {

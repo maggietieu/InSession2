@@ -6,32 +6,22 @@ function sum_from_file(file_name){
     } else if (!fs.existsSync(file_name)) {
         throw new Exception("File does not exist.");
     }
+    
+    var sum = 0;
+    var data = fs.readFileSync(file_name);
+    var lines = data.toString().split("\n");
 
-    var text_to_append = "\n";
-
-    fs.readFileSync((file_name), (err, data) => {
-        if(err) throw new Exception(err.toString());
-
-        var lines = data.toString().split("\n");
-        var sum = 0;
-
-        lines.forEach(line => {
-            console.log(line);
-            if(isNaN(parseInt(line))){
-                throw new Exception("Failed to parse a value into integer type");
-            }
-            sum += parseInt(line);
-        });
-
-        if(isNaN(sum)){
-            throw new Exception("");
+    lines.forEach(line => {
+        if(isNaN(parseInt(line)) || parseInt(line) != line){
+            throw new Exception("Failed to parse a value into integer type");
         }
+        sum += parseInt(line);
+    });
 
-        text_to_append += sum.toString();
+    var text_to_append = "\n" + sum.toString();
 
-        fs.appendFileSync(file_name, text_to_append, (err) => {
-            if(err) throw err;
-        });
+    fs.appendFileSync(file_name, text_to_append, (err) => {
+        if(err) throw err;
     });
 }
 
