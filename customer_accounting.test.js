@@ -107,11 +107,6 @@ describe("Adding an order to database", () => {
         var amtPurchased1 = 2;
         var amtPurchased2 = 5;
         var filter = {customerId : customerId};
-
-        Customer.find().exec(function (err, result) {
-            console.log(result);
-        });
-
         await createCustomer(customerId, name);
         await createOrder(customerId, amtPurchased1);
         await createOrder(customerId, amtPurchased2);

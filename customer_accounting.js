@@ -11,9 +11,9 @@ const Order = require('./models/order');
 mongoose.connect('mongodb://localhost/customerDB');
 
 mongoose.connection.once('open', () => {
-    console.log('Database connection successful...');
+    //console.log('Database connection successful...');
 }).on('error', function(err){
-    console.log('Database connection ERROR...');
+    //console.log('Database connection ERROR...');
 });
 
 async function createCustomer(_customerId, _name) {

@@ -2,19 +2,23 @@
 const mock = require('mock-fs');
 const sum_from_file = require('./sum_from_file');
 
-// var fs = require('fs');
+var fs = require('fs');
+
+// beforeAll(async () => {
+//      mock({
+//         'textFile1.txt': '1\n2\n3',
+//         'textFile2.txt': '1.5',
+//         'textFile3.txt': 'a',
+//         'textFile4.txt': '',
+//     });
+// });
+
+// afterAll(() => {
+//     mock.restore();
+// });
 
 describe("sum_from_file function adds up integers from text file", () => {
-    beforeAll(() => {
-        mock({
-            'textFile1.txt': '1\n2\n3'
-        });
-    });
-
-    // afterAll(() => {
-    //     mock.restore();
-    // });
-
+    // #mock #spy #stub
     it('calls sum_from_file() function once with correct input', async () => {
         const sum_from_file = jest.fn();
         const file_name = 'fileName.txt';
@@ -23,39 +27,50 @@ describe("sum_from_file function adds up integers from text file", () => {
         expect(sum_from_file.mock.calls[0][0]).toBe(file_name);
     });
 
-    // #mock, #stub
+    // #mock #stub
     it('correctly append sum of the integers in the file', async () => {
-        // const fileName = 'testFile1.txt';
-        // const expectedRes = '1\n2\n3\n6';
-
-        // sum_from_file(fileName).then(res => {
-        //     const actualRes = fs.readFileSync(file, 'utf8');
-        //     expect(actualRes).equal(expectedRes)
-        // });
-        expect(2).toBe(2);
+        const fileName = 'textFile1.txt';
+        const expectedRes = '1\n2\n3\n6';
+        await sum_from_file(fileName);
+        fs.readFileSync((fileName), (err, data) => {
+            expect(data).toBe(expectedRes);
+        });
     });
     
-    it('should reject a non-string fileName', () => {
+    // #stub
+    it('should reject a non-string fileName', async () => {
         expect(() => {sum_from_file(1)}).toThrow();
     });
 
-    it('should reject a null fileName', () => {
+    // #stub
+    it('should reject a null fileName', async () => {
         expect(() => {sum_from_file(null)}).toThrow();
     });
 
-    // it('should reject a non-existent fileName', () => {
-    //     expect(() => {sum_from_file('non_existent.txt')}).toThrow();
-    // });
-
-    it('should reject files with floating-point values', () => {
-
+    // #dummy
+    it('should reject a non-existent fileName', async () => {
+        expect(() => {sum_from_file('non_existent.txt')}).toThrow();
     });
 
-    it('should reject files with non-numeric values', () => {
-
+    // #stub
+    it('should reject files with floating-point values', async () => {
+        const fileName = 'textFile2.txt';
+        expect(() => {sum_from_file(fileName)}).toThrow();
     });
 
-    it('should append 0 to empty files', () => {
+    // #stub
+    it('should reject files with non-numeric values', async () => {
+        const fileName = 'textFile3.txt';
+        expect(() => {sum_from_file(fileName)}).toThrow();
+    });
 
+    // #stub
+    it('should append 0 to empty files', async () => {
+        const fileName = 'textFile4.txt';
+        const expectedRes = '0';
+        await sum_from_file(fileName);
+        fs.readFileSync((fileName), (err, data) => {
+            expect(data).toBe(expectedRes);
+        });
     });
 });
