@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest --verbose"
   },
+  "type": "module",
   "author": "",
   "license": "ISC",
   "dependencies": {

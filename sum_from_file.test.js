@@ -1,21 +1,5 @@
-// const sum_from_file = require('./sum_from_file');
-const mock = require('mock-fs');
 const sum_from_file = require('./sum_from_file');
-
-var fs = require('fs');
-
-// beforeAll(async () => {
-//      mock({
-//         'textFile1.txt': '1\n2\n3',
-//         'textFile2.txt': '1.5\n2.0',
-//         'textFile3.txt': 'A\nB\nC\nD\nE',
-//         'textFile4.txt': '',
-//     });
-// });
-
-// afterAll(() => {
-//     mock.restore();
-// });
+const fs = require('fs');
 
 describe("sum_from_file function adds up integers from text file", () => {
     // #mock #spy #stub
@@ -29,7 +13,7 @@ describe("sum_from_file function adds up integers from text file", () => {
 
     // #mock #stub
     it('correctly append sum of the integers in the file', async () => {
-        const fileName = 'textFile1.txt';
+        const fileName = './stubbed_txt_files/textFile1.txt';
         const expectedRes = '1\n2\n3\n6';
         await sum_from_file(fileName);
         fs.readFileSync((fileName), (err, data) => {
@@ -55,15 +39,15 @@ describe("sum_from_file function adds up integers from text file", () => {
         expect(() => {sum_from_file(fileName)}).toThrow();
     });
 
-    // #mock #stub
+    // #stub
     it('should reject files with floating-point values', async () => {
-        const fileName = 'textFile2.txt';
+        const fileName = './stubbed_txt_files/textFile2.txt';
         expect(() => {sum_from_file(fileName)}).toThrow();
     });
 
-    // #mock #stub
+    // #stub
     it('should reject files with non-numeric values', async () => {
-        const fileName = 'textFile3.txt';
+        const fileName = './stubbed_txt_files/textFile3.txt';
         expect(() => {sum_from_file(fileName)}).toThrow();
     });
 });
